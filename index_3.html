@@ -2,13 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>CryptoZombies front-end</title>
+    <title>VIKI</title>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="web3.min.js"></script>
     <script language="javascript" type="text/javascript" src="MITxABI.js"></script>
   </head>
   <body>
     <div id="txStatus"></div>
+    <div id="tokenRaised"></div>
+    <h1>My First Web Page</h1>
+    <p>My first paragraph.</p>
     <script>
         // 2. Start code here
       var mITxContract;
@@ -16,24 +19,18 @@
 
       function startApp() {
         var contractAddress = "0x2d83776DDF6aF57a48C8bF016C25fA3B3A25a304";
-        mITxContract = new web3js.eth.Contract(ABI, contractAddress);
-      
-      var accountInterval = setInterval(function() {
-          // Check if account has changed
-          if (web3.eth.accounts[0] !== userAccount) {
-            userAccount = web3.eth.accounts[0];
-            // Call a function to update the UI with the new account
-            getZombiesByOwner(userAccount)
-            .then(displayZombies);
-          }
-        }, 100);
-    }
+        //mITxContract = new web3js.eth.Contract(ABI, contractAddress);
+        
+        //document.write(4+4);
+        $("#txStatus").text(contractAddress);
 
-
-     function getTokenReised() {
-        return mITxContract.methods.tokenRaised.call()
-        $("#txStatus").text("ok");
+        //document.getElementById("tokenRaised").innerHTML = mITxContract.tokenRaised();
+       
       }
+     
+       
+      
+      
   
         window.addEventListener('load', function() {
   
@@ -41,14 +38,17 @@
           if (typeof web3 !== 'undefined') {
             // Use Mist/MetaMask's provider
             web3js = new Web3(web3.currentProvider);
+            //$("#txStatus").text("super, we have web3");
+            startApp();
           } else {
             // Handle the case where the user doesn't have Metamask installed
             // Probably show them a message prompting them to install Metamask
             $("#txStatus").text("hoppa nincs web3");
           }
-  
+         
           // Now you can start your app & access web3 freely:
-          startApp()
+          
+          
   
         })
       </script>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Viki porba App</title>
+    <script type="text/javascript" src="./web3.min.js"></script>
+    <script type="text/javascript" src="./ABI_probaIRIS.js"></script>
+    <script type="text/javascript" src="./ABI_segedIRIS.js"></script>
+    
+ </head>
+   <body>
+      <h1> VIKI első appja kisérletek1</h1>
+    
+    <p>Ird ide az Ethereum Address-t:</p>
+    <input type="text" size="50" id="address" />
+    <button type="button" onClick="Balance();">Balance</button>
+    <br />
+    <br />
+    <br />
+    <h1>ETH network : </h1>
+    <p>
+    <button type="button" onClick="Network();">Network</button>
+   </p>
+    <br /> 
+    <br />
+    <h1>Lekérdezés: IRIS TOKEN : </h1>
+    <p>
+    <button type="button" onClick="MyApp();">Start MyApp</button>
+   </p>
+    <br /> 
+    <p>Ird ide az  Address-t:</p>
+    <input type="text" size="50" id="iris1" />
+    <button type="button" onClick="BalanceOf();">Balance</button>
+    <br />
+    <h1>Küldés: IRIS TOKEN valakinek placeToken()- nel : </h1>
+   
+     <p>Ird ide az  Address-t:</p>
+     <input type="text" size="50" id="iris2" />
+     <p>Ird ide az  Amountot-t:</p>
+    <input type="text" size="50" id="iris3" />
+    <button type="button" onClick="PlaceToken();">Start token Küldés</button>
+   
+    <br /> 
+    
+    <div id="output"></div>
+    <div id="network"></div>
+    <div id="name"></div>
+    <div id="owner"></div>
+    <div id="minting"></div>
+    <div id="iris1"></div>
+    <div id="iris2"></div>
+    <div id="iris3"></div>
+    <div id="irisseged"></div>
+    <script>
+        window.addEventListener('load', function () {
+            if (typeof web3 !== 'undefined') {
+                console.log('Web3 Detected! ' + web3.currentProvider.constructor.name)
+                window.web3 = new Web3(web3.currentProvider);
+            } else {
+                console.log('No Web3 Detected... using HTTP Provider')
+                window.web3 = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/NZj0uaZfw9wcy72qxjtS"));
+            }
+        })
+        function Balance() {
+            var address, wei, balance
+            address = document.getElementById("address").value
+            try {
+                web3.eth.getBalance(address, function(error, wei) {
+                    if (!error) {
+                        var balance = web3.fromWei(wei, 'ether');
+                        document.getElementById("output").innerHTML = balance + " ETH";
+                    }
+                });
+            } catch (err) {
+                document.getElementById("output").innerHTML = err;
+            }
+        }
+        function Network() {
+                  
+           web3.version.getNetwork((err, netId) => {
+             switch (netId) {
+                case "1":
+                    document.getElementById("network").innerHTML = "MAIN"
+                    break
+                case "3":
+                    document.getElementById("network").innerHTML = "ROPSTEN"
+                     break
+                case "42":
+                    document.getElementById("network").innerHTML = "KOVAN"
+                     break
+                default:
+                    console.log('This is an unknown network.')
+  }
+})
+}
+
+function PlaceToken() {
+    var address,res,amount
+    var My_SEGEDIRIS_Contract = web3.eth.contract(SEGEDabi);
+        // initiate contract for an address
+    var myContractInstance = My_SEGEDIRIS_Contract.at('0x23fAd5F860a8eF42a412f849B9Eba964006D7f42');
+
+    address = document.getElementById("iris2").value
+    amount = document.getElementById("iris3").value
+    web3.eth.defaultAccount = '0x0006bD3CEbF6ecD2A05018853bd4EB44187c267c';
+    //var amountinwei = web3.toWei(res, 'ether');
+            try {
+                myContractInstance.placeTokens(address, amount, function(error, res)  {
+                    if (!error) {
+                    document.getElementById("output").innerHTML = "PlaceToken is OK";
+                    }
+                });
+            } catch (err) {
+                document.getElementById("output").innerHTML = err;
+            }
+        } 
+function MyApp() {
+            // creation of contract object
+var MyTOKENContract = web3.eth.contract(TOKENabi);
+
+// initiate contract for an address
+var myContractInstance = MyTOKENContract.at('0xd4413d6813dEd6a84F6F9F6C8495e4C24451B078');
+     
+myContractInstance.mintingFinished(function(err, res){
+    document.getElementById('minting').innerText = "IRIS TOKEN (mintingFinished):  " + res;
+})
+
+myContractInstance.owner(function(err, res){
+    document.getElementById('owner').innerText = "IRIS TOKEN (owner):  " + res;
+})
+
+myContractInstance.name(function(err, res){
+    document.getElementById('name').innerText = "IRIS TOKEN (name):  " + res;
+})
+
+Seged();
+
+}
+var MyTOKENContract = web3.eth.contract(TOKENabi);
+
+// initiate contract for an address
+var myContractInstance = MyTOKENContract.at('0xd4413d6813dEd6a84F6F9F6C8495e4C24451B078');
+function BalanceOf() {
+    var address,res,balance
+    var MyTOKENContract = web3.eth.contract(TOKENabi);
+        // initiate contract for an address
+    var myContractInstance = MyTOKENContract.at('0xd4413d6813dEd6a84F6F9F6C8495e4C24451B078');
+
+    address = document.getElementById("iris1").value
+            try {
+                myContractInstance.balanceOf(address, function(error, res) {
+                    if (!error) {
+                        var balance = web3.fromWei(res, 'ether');
+                        document.getElementById("output").innerHTML = balance + "IRIS";
+                    }
+                });
+            } catch (err) {
+                document.getElementById("output").innerHTML = err;
+            }
+        }
+
+function Seged() {
+    var address,res,balance
+    var My_SEGEDIRIS_Contract = web3.eth.contract(SEGEDabi);
+        // initiate contract for an address
+    var myContractInstance = My_SEGEDIRIS_Contract.at('0x23fAd5F860a8eF42a412f849B9Eba964006D7f42');
+
+    myContractInstance.owner(function(err, res){
+        if(res = 0x0006bD3CEbF6ecD2A05018853bd4EB44187c267c)
+          document.getElementById("irisseged").innerHTML = "kovan_SARICSACSI"
+        else
+          document.getElementById('irisseged').innerText = "Valaki más:  " + res;
+
+        
+        
+             
+})
+
+  
+}        
+// send a transaction to a function
+//myContractInstance.myStateChangingMethod('someParam1', 23, {value: 200, gas: 2000});
+
+    </script>
+
+
+   
+</body>
+</html>
